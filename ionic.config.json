@@ -1,0 +1,7 @@
+{
+  "name": "proyecto-pwa-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
