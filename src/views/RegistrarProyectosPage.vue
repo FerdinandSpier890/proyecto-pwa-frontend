@@ -32,12 +32,12 @@
                 <ion-item>
                   <ion-label position="floating">Empresa que realiza el proyecto</ion-label>
                   <ion-select v-model="empresa" required>
-                    <ion-select-option v-for="item in empresas" :key="item.id" :value="item.id">{{ item.nombre }}</ion-select-option>
+                    <ion-select-option v-for="item in empresas" :key="item.idEmpresa" :value="item.idEmpresa">{{ item.nombreEmpresa }}</ion-select-option>
                   </ion-select>
                 </ion-item>
               </ion-list>
   
-              <ion-button expand="full" color="primary" type="submit">Registrar</ion-button>
+              <ion-button expand="full" color="primary" type="submit" @click="registrarProyecto">Registrar</ion-button>
             </v-form>
           </ion-card-content>
         </ion-card>
@@ -104,10 +104,19 @@
     methods: {
       async fetchEmpresas() {
         try {
-          const response = await fetch("https://localhost:44313/api/Empresas");
+          const token = this.obtenerToken();
+
+          const response = await fetch("https://localhost:44313/api/Empresas", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
           if (response.ok) {
             const data = await response.json();
             this.empresas = data;
+            console.log(data);
           } else {
             console.error("Error al obtener la lista de empresas");
           }
@@ -145,10 +154,10 @@
           swal("Error", "Error al registrar el proyecto", "error");
         }
       },
-    },
-    obtenerToken() {
+      obtenerToken() {
             return document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
         },
+    },
   };
   
   function generateGUID() {
