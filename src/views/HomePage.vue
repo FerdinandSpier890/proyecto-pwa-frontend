@@ -150,7 +150,7 @@ export default {
           auth.setUserLogged(JSON.stringify(user));
           this.loading = false;
           setTimeout(() => {
-            // this.$router.push("/autores");
+            this.$router.push("empresas");
             // location.reload();
           }, 5000);
         }

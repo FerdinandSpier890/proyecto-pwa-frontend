@@ -73,8 +73,39 @@ export default {
     };
   },
   methods: {
-    registrarEmpresa() {
-      swal("Registro Exitoso", 'Empresa registrada correctamente', "success");
+    async registrarEmpresa() {
+      const token = this.obtenerToken();
+
+      // Crea un objeto con los datos de la empresa
+      const empresaData = {
+        idEmpresa: generateGUID(), // Genera un nuevo GUID
+        nombreEmpresa: this.nombre,
+        direccionEmpresa: this.direccion,
+        imagenEmpresa: this.imagenURL,
+        descripcionEmpresa: this.descripcion,
+      };
+
+      try {
+        const response = await fetch("https://localhost:44313/api/Empresas", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(empresaData),
+        });
+
+        if (response.ok) {
+          swal("DevChoice", "La Empresa se Registró Correctamente", "success")
+        } else {
+          swal("DevChoice", "Error al Registrar la Empresa", "error")
+        }
+      } catch (error) {
+        swal("DevChoice", error, "error")
+      }
+    },
+    obtenerToken() {
+      return document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
     },
   },
 };

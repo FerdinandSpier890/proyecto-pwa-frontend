@@ -1,55 +1,53 @@
 <template>
     <ion-page>
-        <ion-header>
-            <ion-toolbar>
-                <ion-title>Registrar Proyecto</ion-title>
-            </ion-toolbar>
-        </ion-header>
-
-        <ion-content class="ion-padding">
-            <ion-card>
-                <ion-card-header>
-                    <ion-card-title class="ion-text-center">Registrar Nuevo Proyecto</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                    <v-form @submit.prevent="registrarProyecto" ref="form">
-                        <ion-list>
-                            <ion-item>
-                                <ion-label position="floating">Nombre del Proyecto</ion-label>
-                                <ion-input v-model="nombre" required></ion-input>
-                            </ion-item>
-
-                            <ion-item>
-                                <ion-label position="floating">Duración del Proyecto</ion-label>
-                                <ion-input v-model="duracion" required></ion-input>
-                            </ion-item>
-
-                            <ion-item>
-                                <ion-label position="floating">Softwares que se utilizarán</ion-label>
-                                <ion-input v-model="softwares" required></ion-input>
-                            </ion-item>
-
-                            <ion-item>
-                                <ion-label position="floating">Empresa que realiza el proyecto</ion-label>
-                                <ion-select v-model="empresa" required>
-                                    <ion-select-option v-for="item in empresas" :key="item" :value="item">{{ item
-                                    }}</ion-select-option>
-                                </ion-select>
-                            </ion-item>
-
-                        </ion-list>
-
-                        <ion-button expand="full" color="primary" type="submit">Registrar</ion-button>
-                    </v-form>
-                </ion-card-content>
-            </ion-card>
-        </ion-content>
-    </ion-page>
-</template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Registrar Proyecto</ion-title>
+        </ion-toolbar>
+      </ion-header>
   
-<script>
-import swal from 'sweetalert';
-import {
+      <ion-content class="ion-padding">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title class="ion-text-center">Registrar Nuevo Proyecto</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <v-form @submit.prevent="registrarProyecto" ref="form">
+              <ion-list>
+                <ion-item>
+                  <ion-label position="floating">Nombre del Proyecto</ion-label>
+                  <ion-input v-model="nombre" required></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="floating">Duración del Proyecto</ion-label>
+                  <ion-input v-model="duracion" required></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="floating">Softwares que se utilizarán</ion-label>
+                  <ion-input v-model="softwares" required></ion-input>
+                </ion-item>
+  
+                <ion-item>
+                  <ion-label position="floating">Empresa que realiza el proyecto</ion-label>
+                  <ion-select v-model="empresa" required>
+                    <ion-select-option v-for="item in empresas" :key="item.id" :value="item.id">{{ item.nombre }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-list>
+  
+              <ion-button expand="full" color="primary" type="submit">Registrar</ion-button>
+            </v-form>
+          </ion-card-content>
+        </ion-card>
+      </ion-content>
+    </ion-page>
+  </template>
+  
+  <script>
+  import swal from 'sweetalert';
+  import {
     IonCard,
     IonContent,
     IonHeader,
@@ -67,61 +65,109 @@ import {
     IonCardSubtitle,
     IonCardTitle,
     IonList
-} from '@ionic/vue';
-
-export default {
+  } from '@ionic/vue';
+  
+  export default {
     components: {
-        IonCard,
-        IonContent,
-        IonHeader,
-        IonPage,
-        IonTitle,
-        IonToolbar,
-        IonItem,
-        IonLabel,
-        IonInput,
-        IonSelect,
-        IonSelectOption,
-        IonButton,
-        IonCardContent,
-        IonCardHeader,
-        IonCardSubtitle,
-        IonCardTitle,
-        IonList
+      IonCard,
+      IonContent,
+      IonHeader,
+      IonPage,
+      IonTitle,
+      IonToolbar,
+      IonItem,
+      IonLabel,
+      IonInput,
+      IonSelect,
+      IonSelectOption,
+      IonButton,
+      IonCardContent,
+      IonCardHeader,
+      IonCardSubtitle,
+      IonCardTitle,
+      IonList
     },
     name: 'RegistrarProyecto',
     data() {
-        return {
-            nombre: '',
-            duracion: '',
-            softwares: '',
-            empresa: '',
-            empresas: [
-                "Empresa 1",
-                "Empresa 2",
-                // Agrega más opciones según las empresas disponibles
-            ],
-        };
+      return {
+        nombre: '',
+        duracion: '',
+        softwares: '',
+        empresa: '',
+        empresas: [],
+      };
+    },
+    async mounted() {
+      // Obtener la lista de empresas de la otra API
+      await this.fetchEmpresas();
     },
     methods: {
-        registrarProyecto() {
-            swal("Registro Exitoso", "Proyecto registrado correctamente", "success")
-        },
-    },
-};
-</script>
+      async fetchEmpresas() {
+        try {
+          const response = await fetch("https://localhost:44313/api/Empresas");
+          if (response.ok) {
+            const data = await response.json();
+            this.empresas = data;
+          } else {
+            console.error("Error al obtener la lista de empresas");
+          }
+        } catch (error) {
+          console.error("Error al obtener la lista de empresas:", error);
+        }
+      },
+      async registrarProyecto() {
+        const token = this.obtenerToken();
+        // Crea un objeto con los datos del proyecto
+        const proyectoData = {
+          idProyecto: generateGUID(),
+          nombreProyecto: this.nombre,
+          duracionProyecto: this.duracion,
+          softwareProyecto: this.softwares,
+          empresaProyecto: this.empresa,
+        };
   
-<style scoped>
-/* Estilos CSS específicos para esta vista */
-.ion-card-title {
+        try {
+          const response = await fetch("https://localhost:44324/api/Proyectos", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(proyectoData),
+          });
+  
+          if (response.ok) {
+            swal("Registro Exitoso", "Proyecto registrado correctamente", "success");
+          } else {
+            swal("Error", "Error al registrar el proyecto", "error");
+          }
+        } catch (error) {
+          swal("Error", "Error al registrar el proyecto", "error");
+        }
+      },
+    },
+    obtenerToken() {
+            return document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+        },
+  };
+  
+  function generateGUID() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = (Math.random() * 16) | 0,
+        v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+  </script>
+  
+  <style scoped>
+  /* Estilos CSS específicos para esta vista */
+  .ion-card-title {
     font-size: 1.5rem;
-}
-
-.ion-button {
+  }
+  
+  .ion-button {
     margin-top: 16px;
-}
-
-/* Cambia el color del texto de los elementos ion-select-option a negro */
-
-</style>
+  }
+  </style>
   
