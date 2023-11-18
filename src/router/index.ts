@@ -6,6 +6,24 @@ import RegistrarEmpresaPage from '../views/RegistrarEmpresaPage.vue';
 import RegistrarProyectoPage from '../views/RegistrarProyectosPage.vue';
 import EmpresasPage from '../views/EmpresasPage.vue';
 
+import Cookies from "js-cookie";
+import swal from "sweetalert";
+
+function isAuthenticated() {
+  const token = Cookies.get("token");
+  return token && token !== "undefined";
+}
+
+const requireAuth = (to, from, next) => {
+  if (!isAuthenticated()) {
+    swal("DevChoice", "Recuerda que Primero Debes Iniciar Sesión Para Ir A Los Sitios", "error")
+    next("/");
+  } else {
+    next();
+  }
+};
+
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -24,17 +42,20 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/registrarempresa',
     name: 'RegistrarEmpresa',
-    component: RegistrarEmpresaPage
+    component: RegistrarEmpresaPage,
+    beforeEnter: requireAuth
   },
   {
     path: '/registrarproyecto',
     name: 'RegistrarProyecto',
-    component: RegistrarProyectoPage
+    component: RegistrarProyectoPage,
+    beforeEnter: requireAuth
   },
   {
     path: '/empresas',
     name: 'Empresas',
-    component: EmpresasPage
+    component: EmpresasPage,
+    beforeEnter: requireAuth
   }
 ]
 

@@ -44,7 +44,7 @@
     "orientation": "portrait-primary",
     "background_color": "#fff",
     "theme_color": "#3f51b5",
-    "description": "A simple Instagram Clone, implementing a lot of PWA love.",
+    "description": "PWA para registrar y consultar proyectos",
     "dir": "ltr",
     "lang": "en-US"
   }

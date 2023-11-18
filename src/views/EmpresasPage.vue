@@ -2,9 +2,9 @@
     <ion-page>
         <ion-header>
             <ion-toolbar style="background-color: #12486B; border-bottom: 1px solid #419197;">
-                <ion-title>
-                    <i class="fa-solid fa-building" style="margin-right: 10px; color: #FFFFFF;"></i>Listado de Empresas
-                </ion-title>
+                <div class="login-logo">
+                    <img src="..\images\logo.png" alt="DevChoice" />
+                </div>
                 <ion-buttons slot="end">
                     <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarEmpresa">
                         <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Empresa
@@ -12,7 +12,18 @@
                     <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarProyecto">
                         <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Proyecto
                     </ion-button>
+                    <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="cerrarSesion">
+                        <i class="fas fa-arrow-right-from-bracket fa-lg" style="margin-right: 10px;"></i> Cerrar Sesion
+                    </ion-button>
                 </ion-buttons>
+                <div slot="end" style="display: flex; align-items: center;">
+                    <ion-avatar slot="start">
+                        <img src="..\images\perfil.png" alt="DevChoice" />
+                    </ion-avatar>
+                    <ion-label style="color: #FFFFFF; margin-left: 10px;">
+                        {{ usuarioLogueado }}
+                    </ion-label>
+                </div>
             </ion-toolbar>
         </ion-header>
 
@@ -121,7 +132,8 @@ import {
     IonImg,
     IonLabel,
     IonContent,
-    IonPage
+    IonPage,
+    IonAvatar
 } from '@ionic/vue';
 
 export default {
@@ -141,7 +153,8 @@ export default {
         IonImg,
         IonLabel,
         IonContent,
-        IonPage
+        IonPage,
+        IonAvatar
     },
     name: 'Empresas',
     data() {
@@ -150,6 +163,7 @@ export default {
             busqueda: '',
             modalAbierto: false,
             proyectosModal: [],
+            usuarioLogueado: ''
         };
     },
     computed: {
@@ -233,9 +247,20 @@ export default {
         cerrarModalProyectos() {
             this.modalAbierto = false;
         },
+        cerrarSesion() {
+            swal("DevChoice", "Vuevla Pronto", "success")
+            auth.deleteUserLogged();
+            location.reload();
+            this.$router.go(0);
+        },
     },
     created() {
         this.cargarEmpresas();
+        const usserLoggedCookie = Cookies.get('userLogged');
+        if (usserLoggedCookie) {
+            const usuario = JSON.parse(decodeURIComponent(usserLoggedCookie));
+            this.usuarioLogueado = usuario.userName;
+        }
     },
 };
 </script>
@@ -288,5 +313,10 @@ ion-fab-button {
     /* Tamaño de fuente para la duración y el software del proyecto */
     color: #000;
     /* Color del texto de duración y software */
-}</style>
+}
+
+.login-logo {
+    padding: 10px 10px;
+}
+</style>
   
