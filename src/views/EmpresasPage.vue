@@ -1,47 +1,67 @@
 <template>
     <ion-page>
         <ion-header>
-            <ion-toolbar>
-                <ion-title>Listado de Empresas</ion-title>
+            <ion-toolbar style="background-color: #12486B; border-bottom: 1px solid #419197;">
+                <ion-title>
+                    <i class="fa-solid fa-building" style="margin-right: 10px; color: #FFFFFF;"></i>Listado de Empresas
+                </ion-title>
+                <ion-buttons slot="end">
+                    <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarEmpresa">
+                        <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Empresa
+                    </ion-button>
+                    <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarProyecto">
+                        <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Proyecto
+                    </ion-button>
+                </ion-buttons>
             </ion-toolbar>
         </ion-header>
 
-        <ion-content class="ion-padding">
-            <ion-grid>
-                <ion-row>
-                    <ion-col size="12" size-sm="6" size-md="4" size-lg="3">
-                        <ion-searchbar v-model="busqueda" placeholder="Buscar por Nombre"></ion-searchbar>
-                    </ion-col>
-                </ion-row>
+        <ion-content style="background-color: #419197;" ref="content">
+            <ion-row class="d-flex align-center justify-center animated-row fade-in"
+                style="background-color: transparent; border-radius: 10px;">
+                <ion-col cols="12" md="6" class="animated-column fade-in">
+                    <ion-item class="ion-align-items-center" style="background-color: transparent; border-radius: 10px;">
+                        <ion-icon slot="start" name="search" style="color: black;"></ion-icon>
+                        <ion-label position="floating" style="color: black;">Buscar por Nombre</ion-label>
+                        <ion-input v-model="busqueda" @input="buscarEmpresa" style="color: black;"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
 
-                <ion-row>
-                    <ion-col v-for="(empresa, index) in empresasFiltradas" :key="index" size="12">
-                        <ion-card class="empresa-card">
-                            <ion-row align-items-center>
-                                <ion-col size="4">
-                                    <ion-img :src="empresa.imagenEmpresa" class="empresa-imagen"></ion-img>
-                                </ion-col>
-
-                                <ion-col size="8">
-                                    <ion-card-content class="ion-no-padding">
-                                        <ion-text class="empresa-nombre">{{ empresa.nombreEmpresa }}</ion-text>
-                                        <!-- Agrega la descripción aquí -->
-                                    </ion-card-content>
-
-                                    <ion-card-actions class="ion-text-right">
-                                        <!-- Mueve los botones al final del ion-card -->
-                                        <ion-button color="primary" @click="verProyectos(index)">Ver Proyectos</ion-button>
-                                        <ion-button color="info" @click="editarEmpresa(index)">Editar Empresa</ion-button>
-                                        <ion-button color="success" @click="actualizarEmpresa(index)">Actualizar Empresa</ion-button>
-                                    </ion-card-actions>
+            <ion-row class="d-flex align-center justify-center">
+                <ion-col v-for="(empresa, index) in empresasFiltradas" :key="index" size-md="3">
+                    <ion-card :id="'card-' + empresa.id" class="hover-scale animated-card fade-in mx-auto align-center"
+                        max-width="auto"
+                        style="border: 5px solid #12486B; border-radius: 10px; background-color: #419197; color: #FF0000"
+                        elevation="10">
+                        <ion-img :src="empresa.imagenEmpresa" height="200px" style="border-radius: 100px;" />
+                        <ion-card-header class="font-weight-bold" style="color: #FFFFFF;">
+                            <ion-card-title style="font-size: 25px; color: #F2E3DB">{{ empresa.nombreEmpresa
+                            }}</ion-card-title>
+                        </ion-card-header>
+                        <hr style="border-color: #146b63;" />
+                        <ion-card-content>
+                            <ion-card-subtitle>
+                                <ion-card-text class="font-weight-bold" style="color: #F2E3DB; font-size: 17.5px">{{
+                                    empresa.descripcionEmpresa }}</ion-card-text>
+                                <br /> <br />
+                                <!-- Agrega más detalles de la empresa según tus necesidades -->
+                                <ion-card-text class="font-weight-bold" style="color: #F2E3DB; font-size: 17.5px">{{
+                                    empresa.direccionEmpresa }}</ion-card-text>
+                                <br /> <br />
+                            </ion-card-subtitle>
+                            <ion-row class="ion-align-items-center ion-justify-content-center">
+                                <ion-col>
+                                    <ion-button expand="full" color="primary" @click="verProyectos(index)">
+                                        <i class="fas fa-eye fa-lg" style="margin-right: 10px;"></i> Ver Proyectos
+                                    </ion-button>
                                 </ion-col>
                             </ion-row>
-                        </ion-card>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
+                        </ion-card-content>
+                    </ion-card>
+                </ion-col>
+            </ion-row>
 
-            <!-- Mueve el botón fuera del ion-grid para asegurar su visibilidad -->
             <ion-row class="ion-justify-content-center ion-align-items-center">
                 <ion-col size="12">
                     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -52,6 +72,32 @@
                 </ion-col>
             </ion-row>
         </ion-content>
+
+        <!-- Modal de Proyectos -->
+        <ion-modal :is-open="modalAbierto" @dismiss="cerrarModalProyectos">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>Proyectos de la Empresa</ion-title>
+                    <ion-buttons slot="end">
+                        <ion-button @click="cerrarModalProyectos">
+                            <i class="fa-solid fa-xmark" style="margin-right: 10px; color: #000;"></i>Cerrar
+                        </ion-button>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-list>
+                    <ion-item v-for="(proyecto, index) in proyectosModal" :key="index" class="proyecto-item">
+                        <ion-label>
+                            <h2 class="proyecto-nombre">{{ proyecto.nombreProyecto }}</h2>
+                            <p class="proyecto-duracion">Duración: {{ proyecto.duracionProyecto }}</p>
+                            <p class="proyecto-software">Software: {{ proyecto.softwareProyecto }}</p>
+                        </ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ion-modal>
+
     </ion-page>
 </template>
   
@@ -102,6 +148,8 @@ export default {
         return {
             empresas: [],
             busqueda: '',
+            modalAbierto: false,
+            proyectosModal: [],
         };
     },
     computed: {
@@ -133,7 +181,12 @@ export default {
             }
         },
         verProyectos(index) {
-            console.log('Ver Proyectos', index);
+            const idEmpresa = this.empresas[index]?.idEmpresa;
+            if (!idEmpresa) {
+                console.error('ID de la empresa no válido');
+                return;
+            }
+            this.obtenerProyectos(idEmpresa);
         },
         editarEmpresa(index) {
             console.log('Editar Empresa', index);
@@ -142,10 +195,43 @@ export default {
             console.log('Actualizar Empresa', index);
         },
         agregarEmpresa() {
-            console.log('Agregar Empresa');
+            this.$router.push("/registrarempresa")
+        },
+        agregarProyecto() {
+            this.$router.push("/registrarproyecto")
         },
         obtenerToken() {
             return document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+        },
+        async obtenerProyectos(idEmpresa) {
+            try {
+                const token = this.obtenerToken();
+                const response = await fetch(`https://localhost:44324/api/Proyectos?empresaProyecto=${idEmpresa}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Error al obtener los proyectos');
+                }
+                const proyectos = await response.json();
+                this.mostrarModalProyectos(proyectos);
+            } catch (error) {
+                console.error('Error al obtener los proyectos:', error.message);
+            }
+        },
+        async mostrarModalProyectos(proyectos) {
+            try {
+                this.proyectosModal = proyectos;
+                this.modalAbierto = true;
+            } catch (error) {
+                console.error('Error al mostrar el modal de proyectos:', error);
+            }
+        },
+        cerrarModalProyectos() {
+            this.modalAbierto = false;
         },
     },
     created() {
@@ -155,60 +241,52 @@ export default {
 </script>
   
 <style scoped>
-.empresa-card {
-    margin-bottom: 20px;
+/* Estilos adicionales según tus necesidades */
+ion-item {
+    --background: #78D6C6;
+    --color: #FFFFFF;
+}
+
+ion-card {
+    --border-color: #78D6C6;
+    --border-radius: 10px;
+    --background: #263A29;
+    --color: #FFFFFF;
+}
+
+ion-button {
+    --background: #78D6C6;
+    --color: #FFFFFF;
+}
+
+ion-fab-button {
+    --background: #78D6C6;
+    --color: #FFFFFF;
+}
+
+.proyecto-item {
     background-color: transparent;
-    /* Sin color de fondo */
-    border: 2px solid #78D6C6;
-    /* Borde con color */
-    border-radius: 15px;
-    /* Bordes redondeados */
+    /* Color de fondo de cada ítem de proyecto */
+    border-bottom: 1px solid #78D6C6;
+    /* Borde inferior entre ítems */
+    padding: 10px;
+    /* Espaciado interno */
 }
 
-.empresa-imagen {
-    height: 300px;
-    width: 300px;
-    object-fit: cover;
-    border-radius: 15px;
-}
-
-.empresa-nombre {
-    font-size: 2.5rem;
+.proyecto-nombre {
+    font-size: 20px;
+    /* Tamaño de fuente para el nombre del proyecto */
+    color: #000;
+    /* Color del nombre del proyecto */
     font-weight: bold;
-    margin-bottom: 10px;
-    color: black;
-    /* Color negro */
+    /* Texto en negrita para el nombre del proyecto */
 }
 
-.empresa-descripcion {
-    margin-bottom: 10px;
-    color: black;
-    /* Color negro */
-}
-
-.ion-text-right {
-    text-align: right;
-}
-
-.rounded-button {
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    background-color: #78D6C6;
-}
-
-.rounded-button ion-icon {
-    font-size: 30px;
-    color: #12486B;
-}
-
-.rounded-button:hover {
-    color: #12486B;
-}
-
-.rounded-button ion-icon:hover {
-    font-size: 30px;
-    color: #78D6C6;
-}
-</style>
+.proyecto-duracion,
+.proyecto-software {
+    font-size: 16px;
+    /* Tamaño de fuente para la duración y el software del proyecto */
+    color: #000;
+    /* Color del texto de duración y software */
+}</style>
   

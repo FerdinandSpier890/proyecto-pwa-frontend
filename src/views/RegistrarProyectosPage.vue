@@ -146,12 +146,13 @@
           });
   
           if (response.ok) {
-            swal("Registro Exitoso", "Proyecto registrado correctamente", "success");
+            swal("DevChoice", "Proyecto registrado correctamente", "success");
+            this.$router.push("/empresas");
           } else {
-            swal("Error", "Error al registrar el proyecto", "error");
+            swal("DevChoice", "Error al registrar el proyecto", "error");
           }
         } catch (error) {
-          swal("Error", "Error al registrar el proyecto", "error");
+          swal("DevChoice", error, "error");
         }
       },
       obtenerToken() {

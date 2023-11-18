@@ -35,7 +35,7 @@
               </ion-item>
             </ion-list>
 
-            <ion-button expand="full" color="primary" type="submit">Registrar</ion-button>
+            <ion-button expand="full" color="primary" type="submit" @click="registrarEmpresa">Registrar</ion-button>
           </v-form>
         </ion-card-content>
       </ion-card>
@@ -46,23 +46,46 @@
 <script>
 import swal from 'sweetalert';
 import {
-  IonCard,
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar
-} from '@ionic/vue';
-
-export default {
-  components: {
     IonCard,
     IonContent,
     IonHeader,
     IonPage,
     IonTitle,
-    IonToolbar
-  },
+    IonToolbar,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonButton,
+    IonCardContent,
+    IonCardHeader,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonList,
+    IonTextarea } from '@ionic/vue';
+
+export default {
+  components: {
+      IonCard,
+      IonContent,
+      IonHeader,
+      IonPage,
+      IonTitle,
+      IonToolbar,
+      IonItem,
+      IonLabel,
+      IonInput,
+      IonSelect,
+      IonSelectOption,
+      IonButton,
+      IonCardContent,
+      IonCardHeader,
+      IonCardSubtitle,
+      IonCardTitle,
+      IonList,
+      IonTextarea
+    },
   name: 'RegistrarEmpresa',
   data() {
     return {
@@ -76,6 +99,19 @@ export default {
     async registrarEmpresa() {
       const token = this.obtenerToken();
 
+      // Asegúrate de que los datos del formulario se actualicen correctamente
+      await this.$nextTick();
+
+      function generateGUID() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+          var r = (Math.random() * 16) | 0,
+            v = c === "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+      }
+
+      console.log('Datos del formulario:', this.nombre, this.direccion, this.imagenURL, this.descripcion);
+
       // Crea un objeto con los datos de la empresa
       const empresaData = {
         idEmpresa: generateGUID(), // Genera un nuevo GUID
@@ -85,9 +121,11 @@ export default {
         descripcionEmpresa: this.descripcion,
       };
 
+      console.log('Datos enviados:', empresaData);
+
       try {
         const response = await fetch("https://localhost:44313/api/Empresas", {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -96,12 +134,14 @@ export default {
         });
 
         if (response.ok) {
-          swal("DevChoice", "La Empresa se Registró Correctamente", "success")
+          swal("DevChoice", "La Empresa se Registró Correctamente", "success");
+          this.$router.push("/empresas")
         } else {
           swal("DevChoice", "Error al Registrar la Empresa", "error")
         }
       } catch (error) {
-        swal("DevChoice", error, "error")
+        swal("DevChoice", "error", "error")
+        console.log(error)
       }
     },
     obtenerToken() {
