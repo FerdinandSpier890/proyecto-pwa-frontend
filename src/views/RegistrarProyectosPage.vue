@@ -136,7 +136,7 @@
         };
   
         try {
-          const response = await fetch("https://localhost:44324/api/Proyectos", {
+          const response = await fetch("http://ProyectosApiPwa.somee.com/api/Proyectos", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

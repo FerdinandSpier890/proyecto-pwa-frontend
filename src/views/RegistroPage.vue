@@ -1,113 +1,109 @@
 <template>
-    <ion-page>
-      <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-          </ion-buttons>
-          <ion-title>Registro</ion-title>
-        </ion-toolbar>
-      </ion-header>
-  
-      <ion-content responsive-sm class="ion-padding">
-        <div class="center-content">
-          <ion-card class="ion-card-small">
-            <ion-card-content>
-              <div class="login-logo">
-                <img src="..\images\logo.png" alt="DevChoice" />
+  <ion-page  class="page" :style="{'--ion-background-color': isDarkMode ? '#dcdcdc' : ''}">
+    <ion-header class="header">
+        <ion-buttons>
+          <ion-button>
+            <ion-toolbar>
+            </ion-toolbar>
+          </ion-button>
+        </ion-buttons>
+    </ion-header>
+    <ion-content :class="{'dark-mode-content': isDarkMode}">
+      <br>
+      <br>
+      <div class="form-container" :class="{'white-form': isDarkMode}">
+        <form @submit.prevent="submitHandler" ref="form">
+          <div>
+            <div>
+              <ion-title class="title-dark">Registro</ion-title>
+              <br>
+              <img src="../images/Logo.png" alt="Logo" class="small-header-image" />
+            </div>
+            <div class="white-list" :class="{'dark-mode-list': isDarkMode}">
+              <!-- Campo Email -->
+              <div :class="{'white-text': isDarkMode}">
+                <ion-label>Email</ion-label>
+                <ion-input v-model="email" placeholder="Ejemplo: user@example.com " class="white-input" style="color: black;"  type="email" 
+                spellcheck="false" autocapitalize="off" required @input="validateEmail"></ion-input>
+                <div v-if="emailError" class="error-message">{{ emailError }}</div>
               </div>
-  
-              <v-form @submit.prevent="submitHandler" ref="form">
-                <ion-list>
-                  <ion-item>
-                    <ion-input class="white-text" label="Email" labelPlacement="stacked" v-model="email" name="email"
-                      type="email" spellcheck="false" autocapitalize="off" required @input="validateEmail"></ion-input>
-                    <div v-if="emailError" class="error-message">{{ emailError }}</div>
-                  </ion-item>
-  
-                  <ion-item>
-                    <ion-input class="white-text" labelPlacement="stacked" label="Nombre" v-model="name"
-                      name="name" type="text" required></ion-input>
-                    <div v-if="nameError" class="error-message">{{ nameError }}</div>
-                  </ion-item>
-  
-                  <ion-item>
-                    <ion-input class="white-text" label="Número de teléfono" labelPlacement="stacked" v-model="phoneNumber"
-                      name="phoneNumber" type="tel" required @input="validatePhoneNumber"></ion-input>
-                    <div v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</div>
-                  </ion-item>
-  
-                  <ion-item>
-                    <ion-input class="white-text" label="Contraseña" labelPlacement="stacked" v-model="password"
-                      name="password" type="password" required @input="validatePassword"></ion-input>
-                    <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
-                  </ion-item>
-  
-                  <ion-item>
-                    <ion-input class="white-text" label="Rol" labelPlacement="stacked" v-model="role"
-                      name="role" type="text" required></ion-input>
-                    <div v-if="roleError" class="error-message">{{ roleError }}</div>
-                  </ion-item>
-                </ion-list>
-  
-                <ion-row responsive-sm class="ion-padding">
-                  <ion-col>
-                    <ion-button @click="submitHandler" expand="block">Registrarse</ion-button>
-                  </ion-col>
-                  <ion-col>
-                    <ion-button @click="onLogin" color="light" expand="block">Iniciar Sesión</ion-button>
-                  </ion-col>
-                </ion-row>
-              </v-form>
-            </ion-card-content>
-          </ion-card>
-        </div>
-      </ion-content>
-    </ion-page>
-  </template>
+              <br>
+              <!-- Campo Nombre -->
+              <div :class="{'white-text': isDarkMode}">
+                <ion-label>Nombre</ion-label>
+                <ion-input v-model="name" placeholder="Ingresa tu nombre" class="white-input" style="color: black;"  type="text" 
+                spellcheck="false" autocapitalize="off" required></ion-input>
+                <div v-if="nameError" class="error-message">{{ nameError }}</div>
+              </div>
+              <br>
+              <!-- Campo télefono -->
+              <div :class="{'white-text': isDarkMode}">
+                <ion-label>Número de télefono</ion-label>
+                <ion-input v-model="phoneNumber" placeholder="Ejemplo: 7721617489" class="white-input" style="color: black;"  type="tel" 
+                spellcheck="false" autocapitalize="off"  required @input="validatePhoneNumber"></ion-input>
+                <div v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</div>
+              </div>
+              <br>
+              <!-- Campo contraseña con funcionalidad de mostrar/ocultar -->
+              <div :class="{'white-text': isDarkMode}">
+                <ion-label>Contraseña</ion-label>
+                <div class="password-input">
+                  <ion-input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Ingresa una contraseña segura" class="white-input"
+                   style="color: black;" required  @input="validatePassword"></ion-input>
+                  <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
+                  <!-- Botón para mostrar/ocultar la contraseña -->
+                  <ion-button fill="clear" size="small" @click="togglePasswordVisibility" class="password-button" style="color: black;">
+                    {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+                  </ion-button>
+                </div>
+              </div>
+              <br>
+              <!-- Campo rol -->
+              <div :class="{'white-text': isDarkMode}">
+                <ion-label>Rol</ion-label>
+                <ion-input v-model="role" placeholder="Ingresa tu rol" class="white-input" style="color: black;"  type="text" 
+                spellcheck="false" autocapitalize="off"  required></ion-input>
+                <div v-if="roleError" class="error-message">{{ roleError }}</div>
+              </div>
+              <!-- Botón para Iniciar Sesión -->
+              <ion-button @click="submitHandler" expand="full" type="submit" class="blue-button">
+              Registrarse
+              </ion-button>
+              <br>
+              <br>
+              <!-- Enlace "Registrarse" -->
+              <div class="password-input">
+              <a class="title-register">¿Ya tienes una cuenta?</a>
+              <a @click="onLogin" class="register-link"> Inicia sesión aquí</a>
+              </div>
+              <br>
+            </div>
+          </div>
+        </form>
+        <br>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
   
   <script>
   import { ref } from 'vue';
   import Cookies from 'js-cookie';
   import swal from 'sweetalert';
   import auth from '../logic/auth.js';
-  import {
-    IonDatetime,
-    IonDatetimeButton,
-    IonModal,
-    IonInput,
-    IonCard,
-    IonCardContent,
-    IonButton,
-    IonItem,
-    IonList,
-    IonTitle,
-    IonToolbar,
-    IonHeader,
-    IonImg,
-    IonLabel,
-    IonContent,
-    IonPage
-  } from '@ionic/vue';
+  import { IonInput, IonPage, IonTitle, IonButton, IonToolbar, IonContent, IonHeader, IonLabel,IonButtons } from '@ionic/vue';
   
   export default {
     components: {
-      IonDatetime,
-      IonDatetimeButton,
-      IonModal,
       IonInput,
-      IonCard,
-      IonCardContent,
       IonButton,
-      IonItem,
-      IonList,
+      IonLabel,
       IonTitle,
       IonToolbar,
       IonHeader,
-      IonImg,
-      IonLabel,
       IonContent,
-      IonPage
+      IonPage,
+      IonButtons
     },
     name: 'Registro',
     data() {
@@ -123,10 +119,20 @@
         passwordError: '',
         roleError: '',
         loading: false,
+        showPassword: false,
+        isDarkMode: false, 
       };
     },
     methods: {
-      validateEmail() {
+      togglePasswordVisibility () {
+      this.showPassword = !this.showPassword;
+    },
+
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+    },
+
+    validateEmail() {
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         if (!emailPattern.test(this.email)) {
           this.emailError = 'Correo electrónico no válido';
@@ -145,7 +151,7 @@
       },
   
       validatePassword() {
-        const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W).{8,}$/;
+        const passwordPattern = /^(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.\W).{8,}$/;
         if (!passwordPattern.test(this.password)) {
           this.passwordError = 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial, y tener al menos 8 caracteres.';
         } else {
@@ -167,7 +173,7 @@
             role: this.role,
           };
           const response = await fetch(
-            "https://localhost:44344/api/AuthApi/register",
+            "http://www.AuthApiPwa.somee.com/api/AuthApi/register",
             {
               method: "POST",
               headers: {
@@ -204,36 +210,97 @@
   </script>
   
   <style scoped>
-  .white-text {
-    color: white;
-  }
-  
-  .center-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  
-  .login-logo {
-    padding: 20px 0;
-    min-height: 100px;
-    text-align: center;
-  }
-  
-  .login-logo img {
-    max-width: 150px;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 4px;
-  }
-  /* Clase de estilo para reducir el tamaño del ion-card */
-  .ion-card-small {
-    max-width: 300px;
-    /* Puedes ajustar el tamaño según tus preferencias */
-  }
+  .page {
+  --ion-background-color: #dcdcdc;
+}
+
+.header {
+  background-color: #1B4B66;
+}
+
+.dark-mode-content {
+  background-color: white;
+}
+
+.white-form {
+  background-color: white;
+}
+
+.white-input {
+  --color: white;
+}
+
+.white-text {
+  color: white;
+}
+
+.title-dark {
+  color: black;
+  text-align: center;
+  font-size:25px;
+}
+
+.title-register {
+  color: black;
+  text-align: center;
+  font-size:14px;
+}
+
+.transparent-button {
+  --border-width: 0;
+  --box-shadow: none;
+  --background: white;
+  color: navy;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.blue-button {
+  --background:#1B4B66;
+  --background-activated:#1B4B66;
+  --border-width: 1px;
+  --border-radius: 5px;
+  --box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  margin-top: 10px; 
+}
+
+.register-link {
+  color: blue; 
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
+  font-size: 14px;
+}
+
+.form-container {
+  padding-bottom: 150px;
+  max-width: 50%;
+  padding: 10px;
+  max-width: 350px;
+  max-height: 900px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  background-color: whitesmoke;
+}
+
+.small-header-image {
+  max-width: 150px;
+  max-height: 150px;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.password-input {
+  display: flex;
+  justify-content: space-between;
+}
+
+.password-button {
+  font-size: 12px;
+  margin-left: 10px;
+  color: black; 
+}
   </style>
-  

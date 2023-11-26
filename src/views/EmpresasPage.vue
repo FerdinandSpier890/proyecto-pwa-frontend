@@ -111,7 +111,6 @@
 
     </ion-page>
 </template>
-  
 <script>
 import Cookies from 'js-cookie';
 import auth from '../logic/auth.js';
@@ -163,7 +162,8 @@ export default {
             busqueda: '',
             modalAbierto: false,
             proyectosModal: [],
-            usuarioLogueado: ''
+            usuarioLogueado: '',
+            notifications: [], // Se añade la propiedad de notificaciones
         };
     },
     computed: {
@@ -176,9 +176,11 @@ export default {
     },
     methods: {
         async cargarEmpresas() {
+            const token = this.obtenerToken();
+            console.log(token)
             try {
-                const token = this.obtenerToken();
-                const response = await fetch('https://localhost:44313/api/Empresas', {
+                console.log('Token:', token);
+                const response = await fetch('http://EmpresasApiPwa.somee.com/api/Empresas', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -190,8 +192,11 @@ export default {
                 }
                 const data = await response.json();
                 this.empresas = data;
+                console.log(data);
+                console.log(response)
             } catch (error) {
-                console.error('Error al obtener las empresas:', error.message);
+                //console.error('Error al obtener las empresas:', error.message);
+                console.log(error)
             }
         },
         verProyectos(index) {
@@ -220,7 +225,7 @@ export default {
         async obtenerProyectos(idEmpresa) {
             try {
                 const token = this.obtenerToken();
-                const response = await fetch(`https://localhost:44324/api/Proyectos?empresaProyecto=${idEmpresa}`, {
+                const response = await fetch(`http://ProyectosApiPwa.somee.com/api/Proyectos?empresaProyecto=${idEmpresa}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -232,8 +237,11 @@ export default {
                 }
                 const proyectos = await response.json();
                 this.mostrarModalProyectos(proyectos);
+                console.log(proyectos)
+                console.log(idEmpresa)
             } catch (error) {
                 console.error('Error al obtener los proyectos:', error.message);
+                console.log(error)
             }
         },
         async mostrarModalProyectos(proyectos) {
@@ -248,10 +256,14 @@ export default {
             this.modalAbierto = false;
         },
         cerrarSesion() {
-            swal("DevChoice", "Vuevla Pronto", "success")
+            this.agregarNotificacion('Cierre de sesión exitoso', 'exito');
             auth.deleteUserLogged();
             location.reload();
             this.$router.go(0);
+        },
+        // Método de notificación de ejemplo
+        agregarNotificacion(mensaje, tipo = 'exito') {
+            this.notifications.push({ message: mensaje, type: tipo });
         },
     },
     created() {
@@ -264,9 +276,8 @@ export default {
     },
 };
 </script>
-  
+
 <style scoped>
-/* Estilos adicionales según tus necesidades */
 ion-item {
     --background: #78D6C6;
     --color: #FFFFFF;
@@ -291,32 +302,48 @@ ion-fab-button {
 
 .proyecto-item {
     background-color: transparent;
-    /* Color de fondo de cada ítem de proyecto */
     border-bottom: 1px solid #78D6C6;
-    /* Borde inferior entre ítems */
     padding: 10px;
-    /* Espaciado interno */
 }
 
 .proyecto-nombre {
     font-size: 20px;
-    /* Tamaño de fuente para el nombre del proyecto */
     color: #000;
-    /* Color del nombre del proyecto */
     font-weight: bold;
-    /* Texto en negrita para el nombre del proyecto */
 }
 
 .proyecto-duracion,
 .proyecto-software {
     font-size: 16px;
-    /* Tamaño de fuente para la duración y el software del proyecto */
     color: #000;
-    /* Color del texto de duración y software */
 }
 
 .login-logo {
     padding: 10px 10px;
 }
+
+/* Estilos para las notificaciones */
+.notifications {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    z-index: 9999;
+}
+
+.notification {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.exito {
+    background-color: #78D6C6;
+    color: #FFFFFF;
+}
+
+.error {
+    background-color: #FF0000;
+    color: #FFFFFF;
+}
 </style>
-  

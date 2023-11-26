@@ -98,7 +98,7 @@ export default {
   methods: {
     async registrarEmpresa() {
       const token = this.obtenerToken();
-
+      console.log(token)
       // Asegúrate de que los datos del formulario se actualicen correctamente
       await this.$nextTick();
 
@@ -124,7 +124,7 @@ export default {
       console.log('Datos enviados:', empresaData);
 
       try {
-        const response = await fetch("https://localhost:44313/api/Empresas", {
+        const response = await fetch("http://EmpresasApiPwa.somee.com/api/Empresas", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ export default {
           swal("DevChoice", "Error al Registrar la Empresa", "error")
         }
       } catch (error) {
-        swal("DevChoice", "error", "error")
+        swal("DevChoice", error, "error")
         console.log(error)
       }
     },
