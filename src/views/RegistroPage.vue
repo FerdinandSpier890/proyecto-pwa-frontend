@@ -17,7 +17,7 @@
             <div>
               <ion-title class="title-dark">Registro</ion-title>
               <br>
-              <img src="../images/Logo.png" alt="Logo" class="small-header-image" />
+              <img src="../images/logo.png" alt="Logo" class="small-header-image" />
             </div>
             <div class="white-list" :class="{'dark-mode-list': isDarkMode}">
               <!-- Campo Email -->
