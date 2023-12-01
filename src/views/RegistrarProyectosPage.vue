@@ -106,7 +106,7 @@
         try {
           const token = this.obtenerToken();
 
-          const response = await fetch("https://localhost:44313/api/Empresas", {
+          const response = await fetch("https://EmpresasApiPwa.somee.com/api/Empresas", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
