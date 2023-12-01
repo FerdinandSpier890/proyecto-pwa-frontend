@@ -7,7 +7,7 @@
                 </div>
                 <ion-buttons slot="end">
                     <ion-button @click="openCamera">
-                    <ion-icon :icon="camera" class="icon-camera"></ion-icon>
+                        <ion-icon :icon="camera" class="icon-camera"></ion-icon>
                     </ion-button>
                     <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarEmpresa">
                         <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Empresa
@@ -40,6 +40,12 @@
                         <ion-input v-model="busqueda" @input="buscarEmpresa" style="color: black;"></ion-input>
                     </ion-item>
                 </ion-col>
+                <div>
+                    <ion-button @click="solicitarPermisos">Solicitar Permisos</ion-button>
+                </div>
+                <div>
+                    <ion-button id="button" @click="enviarNotificaciones">EnviarNotificaciones</ion-button>
+                </div>
             </ion-row>
 
             <ion-row class="d-flex align-center justify-center">
@@ -171,6 +177,7 @@ export default {
             notifications: [], // Se añade la propiedad de notificaciones
             camera, // Asegúrate de tener la coma al final de esta línea
             imageDataUrl: '', // Agrega esta línea para almacenar la imagen de la cámara
+            tareaVencidaTitle: 'Gracias por usar DevChoice',
         };
     },
     computed: {
@@ -183,18 +190,18 @@ export default {
     },
     methods: {
         async openCamera() {
-      try {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: true,
-          resultType: CameraResultType.DataUrl,
-          source: CameraSource.Camera, // Asegúrate de usar CameraSource.Camera
-        });
-        this.imageDataUrl = image.dataUrl;
-      } catch (error) {
-        console.error('Error al abrir la cámara', error);
-      }
-    },
+            try {
+                const image = await Camera.getPhoto({
+                    quality: 90,
+                    allowEditing: true,
+                    resultType: CameraResultType.DataUrl,
+                    source: CameraSource.Camera, // Asegúrate de usar CameraSource.Camera
+                });
+                this.imageDataUrl = image.dataUrl;
+            } catch (error) {
+                console.error('Error al abrir la cámara', error);
+            }
+        },
         async cargarEmpresas() {
             const token = this.obtenerToken();
             console.log(token)
@@ -285,16 +292,65 @@ export default {
         agregarNotificacion(mensaje, tipo = 'exito') {
             this.notifications.push({ message: mensaje, type: tipo });
         },
+        solicitarPermisos() {
+            this.solicitarPermisoNotificaciones();
+        },
+        solicitarPermisoNotificaciones() {
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission().then((permission) => {
+                    if (permission !== 'granted') {
+                        alert('Se ha denegado el permiso para mostrar notificaciones');
+                    }
+                });
+            }
+        },
+        iniciarNotificaciones() {
+            var button = document.getElementById("button");
+
+            if (window.self !== window.top) {
+                button.textContent = "Ver el resultado en vivo del código de ejemplo anterior";
+                button.addEventListener("click", () => window.open(location.href));
+                return;
+            }
+
+            button.addEventListener("click", () => this.enviarNotificaciones());
+        },
+        enviarNotificaciones() {
+            if (!('Notification' in window)) {
+                alert('Este navegador no admite notificaciones');
+                return;
+            }
+
+            if (Notification.permission === "granted") {
+                // Enviar notificación cada 20 segundos
+                setInterval(() => {
+                    var img = "/src/images/icons/app-icon-144x144.png";
+                    var text = '¡Gracias por usar DevChoice!';
+                    var notification = new Notification("DevChoice", {
+                        body: text,
+                        icon: img,
+                    });
+                }, 10000);
+            } else {
+                alert("¡Hola!");
+            }
+        },
+        created() {
+            this.cargarEmpresas();
+            const usserLoggedCookie = Cookies.get('userLogged');
+            if (usserLoggedCookie) {
+                const usuario = JSON.parse(decodeURIComponent(usserLoggedCookie));
+                this.usuarioLogueado = usuario.userName;
+            }
+        },
+        mounted() {
+        this.solicitarPermisoNotificaciones();
+        this.$nextTick(() => {
+            this.iniciarNotificaciones();
+        });
     },
-    created() {
-        this.cargarEmpresas();
-        const usserLoggedCookie = Cookies.get('userLogged');
-        if (usserLoggedCookie) {
-            const usuario = JSON.parse(decodeURIComponent(usserLoggedCookie));
-            this.usuarioLogueado = usuario.userName;
-        }
-    },
-};
+    }
+}
 </script>
 
 <style scoped>
@@ -366,7 +422,8 @@ ion-fab-button {
     background-color: #FF0000;
     color: #FFFFFF;
 }
-.icon-camera{
-color: white;
+
+.icon-camera {
+    color: white;
 }
 </style>

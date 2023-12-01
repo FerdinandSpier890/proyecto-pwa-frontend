@@ -18,7 +18,7 @@
               <br>
               <ion-title class="title-dark">Iniciar Sesión</ion-title>
               <br>
-              <img src="../images/Logo.png" alt="Logo" class="small-header-image" />
+              <img src="../images/logo.png" alt="Logo" class="small-header-image" />
             </div>
             <br>
             <div class="white-list" :class="{'dark-mode-list': isDarkMode}">
