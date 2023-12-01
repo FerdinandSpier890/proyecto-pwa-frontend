@@ -124,7 +124,7 @@ export default {
       console.log('Datos enviados:', empresaData);
 
       try {
-        const response = await fetch("http://EmpresasApiPwa.somee.com/api/Empresas", {
+        const response = await fetch("https://EmpresasApiPwa.somee.com/api/Empresas", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

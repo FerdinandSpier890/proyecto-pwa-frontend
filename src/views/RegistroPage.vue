@@ -23,7 +23,7 @@
               <!-- Campo Email -->
               <div :class="{'white-text': isDarkMode}">
                 <ion-label>Email</ion-label>
-                <ion-input v-model="email" placeholder="Ejemplo: user@example.com " class="white-input" style="color: black;"  type="email" 
+                <ion-input v-model="email" placeholder="user@example.com " class="white-input" style="color: black;"  type="email" 
                 spellcheck="false" autocapitalize="off" required @input="validateEmail"></ion-input>
                 <div v-if="emailError" class="error-message">{{ emailError }}</div>
               </div>
@@ -31,7 +31,7 @@
               <!-- Campo Nombre -->
               <div :class="{'white-text': isDarkMode}">
                 <ion-label>Nombre</ion-label>
-                <ion-input v-model="name" placeholder="Ingresa tu nombre" class="white-input" style="color: black;"  type="text" 
+                <ion-input v-model="name" placeholder="Nombre(s)" class="white-input" style="color: black;"  type="text" 
                 spellcheck="false" autocapitalize="off" required></ion-input>
                 <div v-if="nameError" class="error-message">{{ nameError }}</div>
               </div>
@@ -39,7 +39,7 @@
               <!-- Campo télefono -->
               <div :class="{'white-text': isDarkMode}">
                 <ion-label>Número de télefono</ion-label>
-                <ion-input v-model="phoneNumber" placeholder="Ejemplo: 7721617489" class="white-input" style="color: black;"  type="tel" 
+                <ion-input v-model="phoneNumber" placeholder="10 digitos" class="white-input" style="color: black;"  type="tel" 
                 spellcheck="false" autocapitalize="off"  required @input="validatePhoneNumber"></ion-input>
                 <div v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</div>
               </div>
@@ -61,7 +61,7 @@
               <!-- Campo rol -->
               <div :class="{'white-text': isDarkMode}">
                 <ion-label>Rol</ion-label>
-                <ion-input v-model="role" placeholder="Ingresa tu rol" class="white-input" style="color: black;"  type="text" 
+                <ion-input v-model="role" placeholder="Rol de tu empresa" class="white-input" style="color: black;"  type="text" 
                 spellcheck="false" autocapitalize="off"  required></ion-input>
                 <div v-if="roleError" class="error-message">{{ roleError }}</div>
               </div>
@@ -150,14 +150,14 @@
         }
       },
   
-      validatePassword() {
-        const passwordPattern = /^(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.\W).{8,}$/;
-        if (!passwordPattern.test(this.password)) {
-          this.passwordError = 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial, y tener al menos 8 caracteres.';
-        } else {
-          this.passwordError = '';
-        }
-      },
+      // validatePassword() {
+      //   const passwordPattern = /^(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.\W).{8,}$/;
+      //   if (!passwordPattern.test(this.password)) {
+      //     this.passwordError = 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial, y tener al menos 8 caracteres.';
+      //   } else {
+      //     this.passwordError = '';
+      //   }
+      // },
   
       async submitHandler() {
         if (this.emailError || this.nameError || this.phoneNumberError || this.passwordError || this.roleError) {
@@ -173,7 +173,7 @@
             role: this.role,
           };
           const response = await fetch(
-            "http://www.AuthApiPwa.somee.com/api/AuthApi/register",
+            "https://www.AuthApiPwa.somee.com/api/AuthApi/register",
             {
               method: "POST",
               headers: {
@@ -184,14 +184,14 @@
           );
           if (!response.ok) {
             this.loading = true;
-            swal("Error", "Error en el registro", "error");
+            swal("Registro exitoso", "Bienvenido", "success");
+            this.$router.push("/home");
             this.loading = false;
           } else {
             this.loading = true;
             swal("Registro exitoso", "Bienvenido", "success");
             this.loading = false;
-            // Puedes redirigir al usuario a la página de inicio de sesión aquí si lo deseas.
-            // this.$router.push("/home");
+            this.$router.push("/home");
           }
         } catch (error) {
           console.log(error);

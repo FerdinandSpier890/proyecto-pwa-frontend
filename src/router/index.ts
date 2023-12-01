@@ -14,7 +14,7 @@ function isAuthenticated() {
   return token && token !== "undefined";
 }
 
-const requireAuth = (to, from, next) => {
+const requireAuth = (to: any, from: any, next: any) => {
   if (!isAuthenticated()) {
     swal("DevChoice", "Recuerda que Primero Debes Iniciar Sesión Para Ir A Los Sitios", "error")
     next("/");

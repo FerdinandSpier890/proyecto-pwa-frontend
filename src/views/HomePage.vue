@@ -2,10 +2,9 @@
   <ion-page  class="page" :style="{'--ion-background-color': isDarkMode ? '#dcdcdc' : ''}">
     <ion-header class="header">
         <ion-buttons>
-          <ion-button>
-            <ion-toolbar>
-            </ion-toolbar>
-          </ion-button>
+              <ion-button @click="openCamera">
+                    <ion-icon :icon="camera" class="icon-camera"></ion-icon>
+              </ion-button>
         </ion-buttons>
     </ion-header>
     <ion-content :class="{'dark-mode-content': isDarkMode}">
@@ -68,7 +67,9 @@
 import Cookies from 'js-cookie';
 import auth from '../logic/auth.js';
 import swal from 'sweetalert';
-import { IonInput, IonPage, IonTitle, IonButton, IonContent, IonHeader, IonLabel, IonToolbar, IonButtons} from '@ionic/vue';
+import { IonInput, IonPage, IonTitle, IonButton, IonContent, IonHeader, IonLabel, IonToolbar, IonButtons, IonIcon} from '@ionic/vue';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { camera } from 'ionicons/icons'; // Importa el ícono de la cámara
 
 export default {
   components: {
@@ -80,9 +81,10 @@ export default {
     IonContent,
     IonPage,
     IonToolbar,
-    IonButtons
+    IonButtons,
+    IonIcon,
   },
-  name: 'Home',
+  name: 'home',
   data() {
     return {
       userName: '',
@@ -92,9 +94,25 @@ export default {
       passwordError: '',
       showPassword: false,
       isDarkMode: false, 
+      camera,
+      imageDataUrl:'',
     };
   },
   methods: {
+    async openCamera() {
+      try {
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Camera, // Asegúrate de usar CameraSource.Camera
+        });
+        this.imageDataUrl = image.dataUrl;
+      } catch (error) {
+        console.error('Error al abrir la cámara', error);
+      }
+    },
+
     togglePasswordVisibility () {
       this.showPassword = !this.showPassword;
     }
@@ -114,14 +132,14 @@ export default {
       }
     },
 
-    validatePassword() {
-      const passwordPattern = /^(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.\W).{8,}$/;
-      if (!passwordPattern.test(this.password)) {
-        this.passwordError = 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial, y tener al menos 8 caracteres.';
-      } else {
-        this.passwordError = '';
-      }
-    },
+    //validatePassword() {
+    //const passwordPattern = /^(?=.[A-Z])(?=.[a-z])(?=.\d)(?=.\W).{8,}$/;
+    //if (!passwordPattern.test(this.password)) {
+    //  this.passwordError = 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial, y tener al menos 8 caracteres.';
+    //} else {
+    //  this.passwordError = '';
+    //}
+    //},
     async submitHandler() {
       if (this.emailError || this.passwordError) {
         return;
@@ -132,7 +150,7 @@ export default {
           password: this.password,
         };
         const response = await fetch(
-          "http://www.AuthApiPwa.somee.com/api/AuthApi/login",
+          "https://www.AuthApiPwa.somee.com/api/AuthApi/login",
           {
             method: "POST",
             headers: {
@@ -266,5 +284,9 @@ export default {
   font-size: 12px;
   margin-left: 10px;
   color: black; 
+}
+
+.icon-camera{
+color: white;
 }
 </style>

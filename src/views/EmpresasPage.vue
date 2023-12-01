@@ -6,6 +6,9 @@
                     <img src="..\images\logo.png" alt="DevChoice" />
                 </div>
                 <ion-buttons slot="end">
+                    <ion-button @click="openCamera">
+                    <ion-icon :icon="camera" class="icon-camera"></ion-icon>
+                    </ion-button>
                     <ion-button style="font-size: 17.5px; color: #FFFFFF;" @click="agregarEmpresa">
                         <i class="fas fa-plus fa-lg" style="margin-right: 10px;"></i> Agregar Empresa
                     </ion-button>
@@ -114,6 +117,8 @@
 <script>
 import Cookies from 'js-cookie';
 import auth from '../logic/auth.js';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { camera } from 'ionicons/icons'; // Importa el ícono de la cámara
 import swal from 'sweetalert';
 import {
     IonDatetime,
@@ -164,6 +169,8 @@ export default {
             proyectosModal: [],
             usuarioLogueado: '',
             notifications: [], // Se añade la propiedad de notificaciones
+            camera, // Asegúrate de tener la coma al final de esta línea
+            imageDataUrl: '', // Agrega esta línea para almacenar la imagen de la cámara
         };
     },
     computed: {
@@ -175,12 +182,25 @@ export default {
         },
     },
     methods: {
+        async openCamera() {
+      try {
+        const image = await Camera.getPhoto({
+          quality: 90,
+          allowEditing: true,
+          resultType: CameraResultType.DataUrl,
+          source: CameraSource.Camera, // Asegúrate de usar CameraSource.Camera
+        });
+        this.imageDataUrl = image.dataUrl;
+      } catch (error) {
+        console.error('Error al abrir la cámara', error);
+      }
+    },
         async cargarEmpresas() {
             const token = this.obtenerToken();
             console.log(token)
             try {
                 console.log('Token:', token);
-                const response = await fetch('http://EmpresasApiPwa.somee.com/api/Empresas', {
+                const response = await fetch('https://EmpresasApiPwa.somee.com/api/Empresas', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -225,7 +245,7 @@ export default {
         async obtenerProyectos(idEmpresa) {
             try {
                 const token = this.obtenerToken();
-                const response = await fetch(`http://ProyectosApiPwa.somee.com/api/Proyectos?empresaProyecto=${idEmpresa}`, {
+                const response = await fetch(`https://ProyectosApiPwa.somee.com/api/Proyectos?empresaProyecto=${idEmpresa}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -345,5 +365,8 @@ ion-fab-button {
 .error {
     background-color: #FF0000;
     color: #FFFFFF;
+}
+.icon-camera{
+color: white;
 }
 </style>

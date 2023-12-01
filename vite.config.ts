@@ -1,21 +1,30 @@
-import legacy from '@vitejs/plugin-legacy'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
-import { defineConfig } from 'vite'
+// vite.config.js
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 8080,
+    host: true,
+    strictPort: true,
+  },
   plugins: [
     vue(),
-    legacy()
+    VitePWA({
+      manifest: {
+        name: "DevChoice",
+        short_name: "DevChoice",
+        icons: [
+          {
+            src: "/src/images/apple-icon-144x144.png",
+            type: "image/png",
+            sizes: "144x144"
+          }
+        ]
+      }
+    }),
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom'
-  }
-})
+});
+
+
